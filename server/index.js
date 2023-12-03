@@ -1,11 +1,8 @@
 const express = require('express');
-
 const app = express();
-const port = 3000;
+port = 3000;
 
-app.get("/", (req, res) => {
-	res.send("Welcome to budgeting app");
-});
+app.use(express.static('dist'));
 app.listen(port, () => {
-	console.log(`Listening on ${port}`);
-});
+  console.log('Budgeting Server running on port', port);
+})
