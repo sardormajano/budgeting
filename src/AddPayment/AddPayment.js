@@ -13,15 +13,6 @@ export const AddPayment = () => {
         <TextField label="Amount" variant="outlined" type="number" />
       </FormControl>
       <FormControl fullWidth sx={{ margin: "5px" }}>
-        <InputLabel>Currency</InputLabel>
-        <Select
-          value="Dollar"
-          label="Currency"
-        >
-          <MenuItem value="Dollar">$</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
         <InputLabel>Direction</InputLabel>
         <Select
           value="Incoming"
