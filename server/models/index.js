@@ -16,8 +16,7 @@ const PaymentTag = new mongoose.Schema({
 });
 
 const Period = new mongoose.Schema({
-  id: String,
-  name: String,
+  name: { type: String, unique: true, index: true, required: true },
   start: Date, 
   end: Date, 
   ...reusedKeys

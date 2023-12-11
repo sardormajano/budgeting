@@ -4,20 +4,16 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Sidebar } from './Sidebar';
 import { Route, Routes } from 'react-router-dom';
 
-import { AddPayment } from './AddPayment/AddPayment';
-import { Periods } from './Periods/Periods';
-import { Payments } from './Payments/Payments';
-import { CreateTag } from './CreateTag/CreateTag';
-import { CreatePeriod } from './CreatePeriod/CreatePeriod';
+import { AddPayment } from './add-payment/add-payment';
+import { Periods } from './periods/periods';
+import { Payments } from './payments/payments';
+import { CreateTag } from './create-tag/create-tag';
+import { CreatePeriod } from './create-period/create-period';
 
 const drawerWidth = 240;
 
-export const App = (props) => {
+export const App = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
 
   return (
     <Box sx={{ display: 'flex' }}>
