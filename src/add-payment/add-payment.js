@@ -25,30 +25,42 @@ export const AddPayment = () => {
   const [tags, setTags] = useState([]);
 
   const handleAddPayment = async () => {
-    const payment = {
-      amount, 
-      incoming, 
-      period: periods.find(p => p._id === period), 
-      tags: selectedTags, 
-      note
-    };
-
-    const response = await fetch(APIs.Payments, {
-      method: 'POST',
-      body: JSON.stringify({
-        payments: [payment]
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const { name, start, end } = periods.find(p => p._id === period);
+      const payment = {
+        amount, 
+        incoming, 
+        period: { name, start, end }, 
+        tags: selectedTags.map(({ name }) => name), 
+        note
+      };
+  
+      const response = await fetch(APIs.Payments, {
+        method: 'POST',
+        body: JSON.stringify({
+          payments: [payment]
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      const { message } = await response.json();
+  
+      if (response.status === 200) {
+        setAlerts([{ message, severity: 'success' }]);
+      } else {
+        setAlerts([{ message, severity: 'error' }]);
       }
-    });
-
-    const { message } = await response.json();
-
-    if (response.status === 200) {
-      setAlerts([{ message, severity: 'success' }]);
-    } else {
-      setAlerts([{ message, severity: 'error' }]);
+    } catch (err) {
+      setAlerts([{ message: err, severity: 'error' }]);
+    } finally {
+      setAmount(0);
+      setIncoming(false);
+      setPeriod('');
+      setSelectedTags([]);
+      setNote('');
+      setTimeout(() => setAlerts([]), 3000);
     }
   }
 

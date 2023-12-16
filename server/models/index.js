@@ -8,7 +8,7 @@ const User = new mongoose.Schema({
 
 const reusedKeys = {
   createdAt: { type: Date, default: Date.now },
-  createdBy: User
+  createdBy: { firstName: String, lastName: String, userId: String }
 }
 
 const PaymentTag = new mongoose.Schema({
@@ -18,17 +18,15 @@ const PaymentTag = new mongoose.Schema({
 const Period = new mongoose.Schema({
   name: { type: String, unique: true, index: true, required: true },
   start: Date, 
-  end: Date, 
-  ...reusedKeys
+  end: Date
 });
 
 const Payment = new mongoose.Schema({
   amount: Number,
   incoming: { type: Boolean, default: false },
-  period: Period,
-  tags: [PaymentTag],
-  note: String,
-  ...reusedKeys
+  period: { name: String, start: Date, end: Date },
+  tags: [{ type: String, index: true }],
+  note: String
 });
 
 module.exports = {
