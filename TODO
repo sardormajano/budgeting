@@ -1,7 +1,7 @@
 - [DONE] REST APIs for Payment Tag 
 - [DONE] REST APIs for Periods
 - REST APIs for Payments
-- Hook up UI Create Tag with BE
+- [DONE] Hook up UI Create Tag with BE
 - [DONE] Hook up UI Create Period with BE
 - Hook up UI Create Payment with BE
 - Design Payments UI page

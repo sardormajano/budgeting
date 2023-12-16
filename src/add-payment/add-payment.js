@@ -1,58 +1,137 @@
-import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import React from 'react';
-
-const paymentTags = [
-  { name: 'Commute' },
-  { name: 'Food' }
-];
+import { 
+  Alert,
+  Autocomplete, 
+  Button, 
+  Checkbox, 
+  FormControl, 
+  FormControlLabel, 
+  InputLabel, 
+  MenuItem, 
+  Select, 
+  TextField
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { APIs } from '../shared/apis';
 
 export const AddPayment = () => {
+  const [amount, setAmount] = useState('0.00');
+  const [incoming, setIncoming] = useState(false);
+  const [period, setPeriod] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [note, setNote] = useState('');
+
+  const [alerts, setAlerts] = useState([]);
+  const [periods, setPeriods] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  const handleAddPayment = async () => {
+    const payment = {
+      amount, 
+      incoming, 
+      period: periods.find(p => p._id === period), 
+      tags: selectedTags, 
+      note
+    };
+
+    const response = await fetch(APIs.Payments, {
+      method: 'POST',
+      body: JSON.stringify({
+        payments: [payment]
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const { message } = await response.json();
+
+    if (response.status === 200) {
+      setAlerts([{ message, severity: 'success' }]);
+    } else {
+      setAlerts([{ message, severity: 'error' }]);
+    }
+  }
+
+  useEffect(() => {
+    fetch(APIs.PaymentTags).then(async response => {
+      const { paymentTags } = await response.json();
+      setTags(paymentTags)
+    });
+  },[]);
+
+  useEffect(() => {
+    fetch(APIs.Periods).then(async response => {
+      const { periods } = await response.json();
+      setPeriods(periods);
+    });
+  }, []);
+
   return (
     <>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
-        <TextField label="Amount" variant="outlined" type="number" />
+      <FormControl fullWidth sx={{ margin: '5px' }}>
+        <TextField
+          label='Amount'
+          variant='outlined'
+          type='number'
+          value={amount}
+          onBlur={() => setAmount(Number(amount).toFixed(2))}
+          onChange={event => setAmount(event.target.value)}
+        />
       </FormControl>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
-        <InputLabel>Direction</InputLabel>
-        <Select
-          value="Incoming"
-          label="Direction"
-        >
-          <MenuItem value="Incoming">Incoming</MenuItem>
-          <MenuItem value="Outgoing">Outgoing</MenuItem>
-        </Select>
+      <FormControl fullWidth sx={{ margin: '5px' }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              onClick={({ target }) => setIncoming(target.checked)}
+              checked={incoming}
+            />
+          }
+          label='Incoming'
+        />
       </FormControl>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
+      <FormControl fullWidth sx={{ margin: '5px' }}>
         <InputLabel>Period</InputLabel>
         <Select
-          value="december-i"
-          label="Period"
+          value={period}
+          label='Period'
+          onChange={({target}) => setPeriod(target.value)}
+          disabled={periods.length === 0}
         >
-          <MenuItem value="december-i">Dec I 2023</MenuItem>
-          <MenuItem value="december-ii">Dec II 2023</MenuItem>
+          {periods.map(({name, _id}) => <MenuItem key={_id} value={_id}>{name}</MenuItem>)}
         </Select>
       </FormControl>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
+      <FormControl fullWidth sx={{ margin: '5px' }}>
         <Autocomplete
           multiple
-          options={paymentTags}
+          value={selectedTags}
+          onChange={(_, newValue) => setSelectedTags(newValue)}
+          options={tags}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
             <TextField
               {...params}
-              variant="outlined"
-              label="Pick tags"
-              placeholder="Payment Tags"
+              variant='outlined'
+              label='Pick tags'
+              placeholder='Payment Tags'
             />
           )}
         />
       </FormControl>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
-        <TextField label="Note" variant="outlined" />
+      <FormControl fullWidth sx={{ margin: '5px' }}>
+        <TextField
+          label='Note'
+          onChange={({ target }) => setNote(target.value)}
+          variant='outlined'
+          value={note}
+        />
       </FormControl>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
-        <Button variant="contained">Add payment</Button>
-      </FormControl>    
+      <FormControl fullWidth sx={{ margin: '5px' }}>
+        <Button 
+          onClick={handleAddPayment} 
+          variant='contained'
+        >Add payment</Button>
+      </FormControl>
+      { alerts.map(({ severity, message }) => <Alert key={message} severity={severity}>{message}</Alert>) }
     </>
   )
 }

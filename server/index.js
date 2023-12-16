@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -15,11 +15,11 @@ app.listen(port, () => {
 (async function connectToDB() {
   try {
     console.log('Using database', process.env.MONGO_URI);
-    const uri = process.env["MONGO_URI"];
+    const uri = process.env['MONGO_URI'];
     await mongoose.connect(uri);
-    console.log("Successfully connected to MongoDB");
+    console.log('Successfully connected to MongoDB');
   } catch (err) {
-    console.log("MongoDB connection error", err);
+    console.log('MongoDB connection error', err);
   }
 })().catch(console.dir);
 

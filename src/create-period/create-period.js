@@ -12,24 +12,24 @@ export const CreatePeriod = () => {
   const handleCreatePeriod = async () => {
     try {
       const response = await fetch(APIs.Periods, {
-        method: "POST", 
+        method: 'POST', 
         body: JSON.stringify({
           periods: [{ name, start, end }]
         }), 
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         }
       });
       
       const { message } = await response.json();
 
       if (response.status === 200) {
-        setAlerts([{ message, severity: "success" }]);
+        setAlerts([{ message, severity: 'success' }]);
       } else {
-        setAlerts([{ message, severity: "error" }]);
+        setAlerts([{ message, severity: 'error' }]);
       }
     } catch (err) {
-      setAlerts([{ message: err, severity: "error" }]);
+      setAlerts([{ message: err, severity: 'error' }]);
     } finally {
       setName('');
       setStart(null);
@@ -39,30 +39,30 @@ export const CreatePeriod = () => {
   }
 
   return <>
-      <FormControl fullWidth sx={{ margin: "5px" }}>
+      <FormControl fullWidth sx={{ margin: '5px' }}>
         <TextField 
-          label="Name" 
-          variant="outlined" 
+          label='Name' 
+          variant='outlined' 
           onChange={({target}) => setName(target.value)} 
           value={name} 
         />
       </FormControl>
       <DatePicker 
-        label="Starts on" 
-        sx={{ margin: "5px" }} 
+        label='Starts on' 
+        sx={{ margin: '5px' }} 
         onChange={start => setStart(start)} 
         value={start}
       />
       <DatePicker 
-        label="Ends on (including end date)" 
-        sx={{ margin: "5px" }} 
+        label='Ends on (including end date)' 
+        sx={{ margin: '5px' }} 
         onChange={end => setEnd(end)} 
         value={end} 
       />
-      <FormControl fullWidth sx={{ margin: "5px" }}>
+      <FormControl fullWidth sx={{ margin: '5px' }}>
         <Button 
           onClick={() => handleCreatePeriod()} 
-          variant="contained"
+          variant='contained'
         >
           Create Period
         </Button>

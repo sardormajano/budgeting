@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 export const Sidebar = ({ drawerWidth }) => {
   return (
     <Drawer
-      variant="permanent"
+      variant='permanent'
       sx={{
         display: { xs: 'none', sm: 'block' },
         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
@@ -21,7 +21,7 @@ export const Sidebar = ({ drawerWidth }) => {
               <ListItemIcon>
                 <AddCard /> 
               </ListItemIcon>
-              <ListItemText primary="Add Payment" />
+              <ListItemText primary='Add Payment' />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -29,7 +29,7 @@ export const Sidebar = ({ drawerWidth }) => {
               <ListItemIcon>
                 <CalendarMonth /> 
               </ListItemIcon>
-              <ListItemText primary="Periods" />
+              <ListItemText primary='Periods' />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -37,7 +37,7 @@ export const Sidebar = ({ drawerWidth }) => {
               <ListItemIcon>
                 <PointOfSale /> 
               </ListItemIcon>
-              <ListItemText primary="Payments" />
+              <ListItemText primary='Payments' />
             </ListItemButton>
           </ListItem>
         </List>
@@ -48,7 +48,7 @@ export const Sidebar = ({ drawerWidth }) => {
               <ListItemIcon>
                 <DateRange /> 
               </ListItemIcon>
-              <ListItemText primary="Create Period" />
+              <ListItemText primary='Create Period' />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
@@ -56,7 +56,7 @@ export const Sidebar = ({ drawerWidth }) => {
               <ListItemIcon>
                 <LocalOffer /> 
               </ListItemIcon>
-              <ListItemText primary="Create Tag" />
+              <ListItemText primary='Create Tag' />
             </ListItemButton>
           </ListItem>
         </List>
