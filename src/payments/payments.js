@@ -1,67 +1,197 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { Autocomplete, Button, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { APIs } from '../shared/apis';
+import { DatePicker } from '@mui/x-date-pickers';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 
 const columns = [
-  { 
-    field: 'id', 
-    headerName: 'ID'
-  },
   {
     field: 'incoming',
-    headerName: 'Incoming',
-    valueGetter: (params) => params.row.incoming ? 'YES' : 'NO'
+    headerName: 'Direction',
+    renderCell: (params) => params.row.incoming ? <ArrowUpward color='success'/> : <ArrowDownward color='error'/>,
+    flex: 1
   },
   {
     field: 'amount',
-    headerName: 'Amount'
+    headerName: 'Amount',
+    flex: 1
   },
   {
     field: 'period',
-    headerName: 'Period'
+    headerName: 'Period', 
+    valueGetter: (params) => params.row.period.name,
+    flex: 1
   },
   {
     field: 'tags',
     headerName: 'Tags',
     description: 'This column has a value getter and is not sortable.',
     valueGetter: (params) => params.row.tags.join(','),
+    flex: 1
   },
   {
-    field: 'notes',
-    headerName: 'Notes'
+    field: 'note',
+    headerName: 'Note',
+    flex: 1
   },
-];
-
-const rows = [
-  { id: 1, incoming: false, amount: 12.33, period: 'Jan I', tags: ['entertainment'], notes: 'american dream' },
-  { id: 2, incoming: false, amount: 2.56, period: 'Jan I', tags: ['food', 'sports'], notes: 'gatorade'  },
-  { id: 3, incoming: false, amount: 45.99, period: 'Dec II', tags: ['commute', 'sports'], notes: 'citi bike'  },
-  { id: 4, incoming: false, amount: 6.77, period: 'Dec II', tags: ['sports', 'entertainment'], notes: 'ice skating'  },
-  { id: 5, incoming: true, amount: 5.55, period: 'Nov I', tags: ['food', 'sports'], notes: 'burger king'  },
-  { id: 6, incoming: false, amount: 356.12, period: 'Nov I', tags: ['food', 'sports'], notes: 'protein cocktail'  },
-  { id: 7, incoming: false, amount: 543.12, period: 'Dec I', tags: ['entertainment', 'commute'], notes: 'american dream'  },
-  { id: 8, incoming: true, amount: 777.33, period: 'Dec I', tags: ['commute'], notes: 'ferry'  },
-  { id: 9, incoming: false, amount: 33.44, period: 'Nov II', tags: ['sports'], notes: 'soccer sofive'  },
-  { id: 10, incoming: false, amount: 612.66, period: 'Nov II', tags: ['commute'], notes: 'bus NJ Transit'  },
 ];
 
 export const Payments = () => {
+  const [incoming, setIncoming] = useState();
+  const [minAmount, setMinAmount] = useState();
+  const [maxAmount, setMaxAmount] = useState();
+  const [period, setPeriod] = useState('');
+  const [periodFrom, setPeriodFrom] = useState();
+  const [periodTo, setPeriodTo] = useState();
+  const [selectedTags, setSelectedTags] = useState();
+
+  const [periods, setPeriods] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [initialPayments, setInitialPayments] = useState([]);
+
+  useEffect(() => {
+    fetch(APIs.Periods).then(async response => {
+      const { periods } = await response.json();
+      setPeriods(periods);
+    });
+  }, []);
+  useEffect(() => {
+    fetch(APIs.PaymentTags).then(async response => {
+      const { paymentTags } = await response.json();
+      setTags(paymentTags)
+    });
+  },[]);
+  useEffect(() => {
+    fetch(APIs.Payments).then(async response => {
+      const { payments } = await response.json();
+      const mappedPayments = payments.map(p => ({ id: p._id, ...p }))
+      setInitialPayments([...mappedPayments])
+      setPayments(mappedPayments);
+    });
+  }, []);
+  useEffect(() => {
+    setPayments(initialPayments.filter(p => {
+      console.log('checking', minAmount, p);
+      return Number(minAmount) <= Number(p.amount);
+    }))
+  }, [minAmount]);
+  useEffect(() => {
+    setPayments(initialPayments.filter(p => {
+      if (incoming === undefined) {
+        return true;
+      }
+      return incoming === p.incoming;
+    }))
+  }, [incoming])
+  const handleResetFilters = () => {
+    setIncoming(undefined);
+    setMinAmount(undefined);
+    setMaxAmount(undefined);
+  }
+
   return (
-    <Box sx={{ height: 700, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 15,
+    <>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <FormControl sx={{ flex: '1', margin: '3px' }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                onClick={({ target }) => setIncoming(target.checked)}
+                checked={incoming}
+                indeterminate={incoming == undefined}
+              />
+            }
+            label='Incoming'
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ flex: '1', margin: '3px' }}>
+          <TextField
+            label='Min Amt'
+            variant='outlined'
+            type='number'
+            value={minAmount}
+            onBlur={() => setMinAmount(Number(minAmount).toFixed(2))}
+            onChange={event => setMinAmount(event.target.value)}
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ flex: '1', margin: '3px' }}>
+          <TextField
+            label='Max Amt'
+            variant='outlined'
+            type='number'
+            value={maxAmount}
+            onBlur={() => setMaxAmount(Number(maxAmount).toFixed(2))}
+            onChange={event => setMaxAmount(event.target.value)}
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ flex: '1', margin: '3px' }}>
+          <InputLabel>Period</InputLabel>
+          <Select
+            value={period}
+            label='Period'
+            onChange={({target}) => setPeriod(target.value)}
+            disabled={periods.length === 0}
+          >
+            {periods.map(({name, _id}) => <MenuItem key={_id} value={_id}>{name}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <DatePicker
+          label='From' 
+          sx={{ flex: '1', margin: '3px' }} 
+          onChange={periodFrom => setPeriodFrom(periodFrom)} 
+          value={periodFrom}
+        />
+        <DatePicker 
+          label='To' 
+          sx={{ flex: '1', margin: '3px' }} 
+          onChange={periodTo => setPeriodTo(periodTo)} 
+          value={periodTo} 
+        />
+        <FormControl sx={{ flex: '1', margin: '3px' }}>
+          <Button 
+            onClick={handleResetFilters} 
+          >Reset Filters</Button>
+        </FormControl>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+        <FormControl sx={{ flex: '1' }}>
+          <Autocomplete
+            multiple
+            value={selectedTags}
+            onChange={(_, newValue) => setSelectedTags(newValue)}
+            options={tags}
+            getOptionLabel={(option) => option.name}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant='outlined'
+                label='Pick tags'
+                placeholder='Payment Tags'
+              />
+            )}
+          />
+        </FormControl>
+      </Box>
+      <Box sx={{ height: '700px', width: '100%', marginTop: 2 }}>
+        <DataGrid
+          rows={payments}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 15,
+              },
             },
-          },
-        }}
-        pageSizeOptions={[5]}
-        checkboxSelection
-        disableRowSelectionOnClick
-      />
-    </Box>
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </Box>
+    </>
   );
 }

@@ -36,18 +36,18 @@ export const CreateTag = () => {
 
   return <>
     <FormControl fullWidth sx={{ margin: '5px' }}>
-        <TextField 
-          label='Name' 
-          variant='outlined'
-          onChange={({target}) => setName(target.value)}
-        />
-      </FormControl>
-      <FormControl fullWidth sx={{ margin: '5px' }}>
-        <Button 
-          variant='contained'
-          onClick={() => handleCreateTag()}
-        >Create Tag</Button>
-      </FormControl>
-      { alerts.map(({ severity, message }) => <Alert key={message} severity={severity}>{message}</Alert>) }
+      <TextField 
+        label='Name' 
+        variant='outlined'
+        onChange={({target}) => setName(target.value)}
+      />
+    </FormControl>
+    <FormControl fullWidth sx={{ margin: '5px' }}>
+      <Button 
+        variant='contained'
+        onClick={() => handleCreateTag()}
+      >Create Tag</Button>
+    </FormControl>
+    { alerts.map(({ severity, message }) => <Alert key={message} severity={severity}>{message}</Alert>) }
   </>
 }
