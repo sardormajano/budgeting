@@ -26,11 +26,11 @@ export const AddPayment = () => {
 
   const handleAddPayment = async () => {
     try {
-      const { name, start, end } = periods.find(p => p._id === period);
+      const { name, start, end, id } = periods.find(p => p._id === period);
       const payment = {
         amount, 
         incoming, 
-        period: { name, start, end }, 
+        period: { id, name, start, end }, 
         tags: selectedTags.map(({ name }) => name), 
         note
       };

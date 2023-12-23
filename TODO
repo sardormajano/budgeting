@@ -6,6 +6,11 @@
 - [DONE] Hook up UI Create Payment with BE
 - [DONE] E11000 Duplicate Error fix
 - [DONE] Design Payments UI page
+- [Done] Add createdAt field to payments
 - Set up payments filters
 - Design Periods UI page
 - Design Periods compare UI page
+- Add authorization
+- Add Budget model, add budget id to payment model
+- After authorization layer added, add `createdBy` field to all models
+- Design plan vs actual
