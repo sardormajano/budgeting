@@ -78,8 +78,8 @@ export const Payments = () => {
       const meetsMinAmount = minAmount !== undefined ? Number(minAmount) <= Number(payment.amount) : true;
       const meetsMaxAmount = maxAmount !== undefined ? Number(maxAmount) >= Number(payment.amount) : true;
       const meetsIncoming = incoming !== undefined ? incoming === payment.incoming : true;
-      const meetsPeriodFrom = periodFrom !== undefined ? new Date(periodFrom) < new Date(payment.createdAt) : true;
-      const meetsPeriodTo = periodTo !== undefined ? new Date(periodTo) > new Date(payment.createdAt) : true;
+      const meetsPeriodFrom = periodFrom ? new Date(periodFrom) < new Date(payment.createdAt) : true;
+      const meetsPeriodTo = periodTo ? new Date(periodTo) > new Date(payment.createdAt) : true;
 
       let meetsPeriod = true;
       if (period) {
@@ -109,7 +109,10 @@ export const Payments = () => {
     setIncoming(undefined);
     setMinAmount(undefined);
     setMaxAmount(undefined);
-    setPeriod(undefined);
+    setPeriod('');
+    setPeriodFrom('');
+    setPeriodTo('');
+    setSelectedTags([]);
   }
 
   return (
